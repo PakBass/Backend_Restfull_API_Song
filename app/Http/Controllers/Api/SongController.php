@@ -13,7 +13,6 @@ class SongController extends Controller
 {
     public function index(){
         $songs = Song::latest()->paginate(3);
-
         return new SongResource(true, 'Data lagu saat ini', $songs);
     }
 
