@@ -63,7 +63,7 @@ class SongController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        //find post by ID
+        //find posts by ID
         $song = Song::find($id);
 
         //check if image is not empty

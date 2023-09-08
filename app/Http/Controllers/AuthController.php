@@ -25,6 +25,12 @@ class AuthController extends Controller
     	$validator = Validator::make($request->all(), [
             'email'     => 'required|email',
             'password'  => 'required|string|min:6',
+        ], [
+            'email.required' => 'Kolom email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'password.required' => 'Kolom password wajib diisi',
+            'password.string' => 'Kolom password harus berupa teks',
+            'password.min' => 'Password harus memiliki minimal 6 karakter',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -43,6 +49,19 @@ class AuthController extends Controller
             'name'      => 'required|string|between:2,100',
             'email'     => 'required|string|email|max:100|unique:users',
             'password'  => 'required|string|confirmed|min:6',
+        ],[
+            'name.required' => 'Kolom nama wajib diisi',
+            'name.string' => 'Kolom nama harus berupa teks',
+            'name.between' => 'Panjang nama harus antara 2 hingga 100 karakter',
+            'email.required' => 'Kolom email wajib diisi',
+            'email.string' => 'Kolom email harus berupa teks',
+            'email.email' => 'Format email tidak valid',
+            'email.max' => 'Panjang email maksimal 100 karakter',
+            'email.unique' => 'Email sudah terdaftar',
+            'password.required' => 'Kolom password wajib diisi',
+            'password.string' => 'Kolom password harus berupa teks',
+            'password.confirmed' => 'Password konfirmasi tidak cocok',
+            'password.min' => 'Password harus memiliki minimal 6 karakter',
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
@@ -73,9 +92,9 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function refresh() {
-        return $this->createNewToken(auth()->refresh(true));
-    }
+    // public function refresh() {
+    //     return $this->createNewToken(auth()->refresh(true));
+    // }
     /**
      * Get the authenticated User.
      *
@@ -95,7 +114,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => Auth()->factory()->getTTL() * 60 * 24,
+            // 'expires_in' => Auth()->factory()->getTTL() * 60 * 24,
             'user' => auth()->user()
         ]);
     }
