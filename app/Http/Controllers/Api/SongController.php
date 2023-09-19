@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class SongController extends Controller
 {
     public function index(){
-        $songs = Song::latest()->paginate(3);
+        $songs = Song::latest()->paginate(4);
         return new SongResource(true, 'Data lagu saat ini', $songs);
     }
 
@@ -22,6 +22,13 @@ class SongController extends Controller
             'image'     =>'required|image|mimes:jpeg,jpg,png,gif,svg|max:2048',
             'nama'      => 'required',
             'judul_lagu'=> 'required',
+        ],[
+            'image.required'    => 'Kolom gambar wajib diisi.',
+            'image.image'       => 'File harus berupa gambar.',
+            'image.mimes'       => 'Format gambar harus jpeg, jpg, png, gif, atau svg.',
+            'image.max'         => 'Ukuran gambar tidak boleh melebihi 2MB.',
+            'nama.required'     => 'Kolom nama wajib diisi.',
+            'judul_lagu.required' => 'Kolom judul lagu wajib diisi.',
         ]);
 
         //cek validasi jika gagal
@@ -31,7 +38,7 @@ class SongController extends Controller
 
         //upload image
         $image = $request->file('image');
-        $image->storeAs('public/songs', $image->hashName());
+        $image->storeAs('public/images', $image->hashName());
 
         //buat data song
         $song = Song::create([
@@ -63,7 +70,7 @@ class SongController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        //find posts by ID
+        //find songs by ID
         $song = Song::find($id);
 
         //check if image is not empty
@@ -71,12 +78,12 @@ class SongController extends Controller
 
             //upload image
             $image = $request->file('image');
-            $image->storeAs('public/songs', $image->hashName());
+            $image->storeAs('public/images', $image->hashName());
 
             //delete old image
-            Storage::delete('public/songs/'.basename($song->image));
+            Storage::delete('public/images/'.basename($song->image));
 
-            //update post with new image
+            //update song with new image
             $song->update([
                 'image'         => $image->hashName(),
                 'nama'          => $request->nama,
@@ -85,7 +92,7 @@ class SongController extends Controller
 
         } else {
 
-            //update post without image
+            //update song without image
             $song->update([
                 'nama'          => $request->nama,
                 'judul_lagu'    => $request->judul_lagu,
@@ -98,7 +105,7 @@ class SongController extends Controller
 
     public function destroy($id) {
         $song = Song::find($id);
-        Storage::delete('public/songs/'. basename($song->image));
+        Storage::delete('public/images/'. basename($song->image));
 
         $song->delete();
         return new SongResource(true, 'Data lagu berhasil dihapus', null);
