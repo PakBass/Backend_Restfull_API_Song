@@ -11,8 +11,20 @@ use Illuminate\Support\Facades\Storage;
 
 class SongController extends Controller
 {
+    public function getSongsForLoggedInUser() {
+        $user = auth()->user(); // Mengambil pengguna yang telah login
+        if ($user->hasRole('admin') || $user->hasRole('operator')) {
+            // Jika pengguna memiliki role admin atau operator, kembalikan semua lagu
+            $songs = Song::latest()->paginate(4);
+        } else {
+            // Jika bukan admin atau operator, ambil lagu-lagu yang dimiliki oleh pengguna
+            $songs = $user->songs()->latest()->paginate(4);
+        }
+        return $songs;
+    }
     public function index(){
-        $songs = Song::latest()->paginate(4);
+        $songs = $this->getSongsForLoggedInUser();
+        // $songs = Song::latest()->paginate(4);
         return new SongResource(true, 'Data lagu saat ini', $songs);
     }
 
@@ -44,7 +56,8 @@ class SongController extends Controller
         $song = Song::create([
             'image'     => $image->hashName(),
             'nama'      => $request->nama,
-            'judul_lagu'=> $request->judul_lagu
+            'judul_lagu'=> $request->judul_lagu,
+            'user_id'   => Auth()->user()->id
         ]);
 
         //kirim response

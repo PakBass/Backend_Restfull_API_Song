@@ -19,4 +19,9 @@ class Song extends Model
             get: fn ($image) => asset('/storage/images/' . $image),
         );
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id');
+    }
 }
