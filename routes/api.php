@@ -26,11 +26,11 @@ use App\Http\Controllers\AuthController;
 // Route::post('/login', App\Http\Controllers\Api\LoginController::class)->name('login');
 
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
-    //     return $request->user();
-    // });
+//         return $request->user();
+//     });
 
 Route::apiResource('/songs',App\Http\Controllers\Api\SongController::class);
-
+// Route::apiResource('/songs', App\Http\Controllers\Api\SongController::class)->middleware('checkRole:admin,operator');
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'

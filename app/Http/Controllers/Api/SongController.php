@@ -15,10 +15,10 @@ class SongController extends Controller
         $user = auth()->user(); // Mengambil pengguna yang telah login
         if ($user->hasRole('admin') || $user->hasRole('operator')) {
             // Jika pengguna memiliki role admin atau operator, kembalikan semua lagu
-            $songs = Song::latest()->paginate(4);
+            $songs = Song::latest()->paginate();
         } else {
             // Jika bukan admin atau operator, ambil lagu-lagu yang dimiliki oleh pengguna
-            $songs = $user->songs()->latest()->paginate(4);
+            $songs = $user->songs()->latest()->paginate();
         }
         return $songs;
     }
